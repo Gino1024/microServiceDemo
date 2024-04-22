@@ -3,11 +3,8 @@ using Confluent.Kafka.Admin;
 
 namespace KafkaHandler
 {
-
   public class KafkaHandler : IKafkaHandler
   {
-
-
     private readonly string _bootstrapServers;
     private readonly string _topic;
 

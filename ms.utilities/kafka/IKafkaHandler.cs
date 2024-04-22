@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+
 namespace KafkaHandler
 {
   public interface IKafkaHandler

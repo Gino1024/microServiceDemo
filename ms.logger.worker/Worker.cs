@@ -15,15 +15,6 @@ public class Worker : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            KafkaTopicChecker kafkaTopicChecker = new KafkaTopicChecker();
-            var isExist = kafkaTopicChecker.TopicExists("localhost:9092", "logs");
-            Console.WriteLine("Log Exists:" + isExist);
-            KafkaSubscriber kafkaSubscriber = new KafkaSubscriber("localhost:9092", "logs");
-            KafkaPublisher kafkaPublisher = new KafkaPublisher("localhost:9092", "logs");
-            //kafkaPublisher.Publish("Hello World2");
-            kafkaSubscriber.Start();
-
-
             if (_logger.IsEnabled(LogLevel.Information))
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
