@@ -13,5 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ms.utilities\ms.utilities.csproj" />
+    <ProjectReference Include="..\ms.infrastructure\ms.infrastructure.csproj" />
   </ItemGroup>
 </Project>
