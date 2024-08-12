@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  api1:
+    image: ms.webapi
+    container_name: webapi
+    ports:
+      - "8081:5000"
+    networks:
+      - my_network
+
+  api2:
+    image: ms.user
+    container_name: user
+    ports:
+      - "8082:5000"
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
