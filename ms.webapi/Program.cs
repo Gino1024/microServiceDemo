@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using ms.infrastructure.protos;
 using ms.webapi;
 
@@ -19,6 +20,9 @@ namespace ms.WebAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<MicroServiceDbContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
@@ -55,7 +59,7 @@ namespace ms.WebAPI
             var grpcServices = builder.Configuration.GetSection("GrpcService").Get<List<GrpcServiceConfig>>();
             var userServiceUrl = grpcServices?.First(service => service.Name == "User").Url;
 
-            builder.Services.AddGrpcClient<User.UserClient>(o =>
+            builder.Services.AddGrpcClient<UserProto.UserProtoClient>(o =>
                     {
                         o.Address = new Uri(userServiceUrl);
                     });
