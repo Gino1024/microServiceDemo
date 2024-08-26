@@ -1,21 +1,71 @@
 version: "3.8"
 services:
-  api1:
+  webapi:
     image: ms.webapi
     container_name: webapi
     ports:
       - "8081:5000"
     networks:
       - my_network
-
-  api2:
+  userapi:
     image: ms.user
     container_name: user
     ports:
       - "8082:5000"
     networks:
       - my_network
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.1
+    container_name: dev_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - my_network
 
+  kafka:
+    image: confluentinc/cp-kafka:7.4.1
+    container_name: dev_kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    networks:
+      - my_network
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  redis:
+    image: redis
+    container_name: dev_redis
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - my_network
+  postgresql:
+    image: postgres
+    container_name: dev_postgres_sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - my_network
+
+volumes:
+  db-data:
+  redis-data:
 networks:
   my_network:
     driver: bridge

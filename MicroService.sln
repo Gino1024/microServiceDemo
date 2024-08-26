@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ms.utilities", "ms.utilitie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ms.infrastructure", "ms.infrastructure\ms.infrastructure.csproj", "{4207A121-4160-4057-816A-735CEC021EE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ms.user", "ms.user\ms.user.csproj", "{9C22BAC6-6050-4507-A118-E308BD990431}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ms.user", "ms.userapi\ms.user.csproj", "{9C22BAC6-6050-4507-A118-E308BD990431}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
