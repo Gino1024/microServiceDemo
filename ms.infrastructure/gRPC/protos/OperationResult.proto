@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option csharp_namespace = "ms.infrastructure.protos";
+
+message OperationResult {
+  bool isSuccess = 1;
+  string msg = 2;
+}

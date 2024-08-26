@@ -1,18 +1,31 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+import "OperationResult.proto";
+
 option csharp_namespace = "ms.infrastructure.protos";
-// The greeting service definition.
-service User {
-  // Sends a greeting
-  rpc GetList (HelloRequest) returns (HelloReply);
+
+service UserProto {
+  rpc Get (UserRequest) returns (UserReply);
+  rpc GetList (google.protobuf.Empty) returns (UsersReply);
 }
 
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
+message UserRequest{
+  int32 id = 1;
 }
 
-// The response message containing the greetings.
-message HelloReply {
-  string message = 1;
+message UsersReply{
+  OperationResult result = 1;
+  repeated UserDto data = 2;
+}
+
+message UserReply{
+  OperationResult result = 1;
+  UserDto data = 2;
+}
+
+message UserDto{
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
 }
