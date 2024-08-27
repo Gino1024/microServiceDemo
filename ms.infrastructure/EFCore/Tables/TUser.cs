@@ -1,14 +1,14 @@
 public class TUser
 {
-  public int UserId { get; set; }
-  public string Name { get; set; }
-  public string Mima { get; set; }
-  public DateTime MimaChangeAt { get; set; }
-  public string Email { get; set; }
-  public bool IsEnable { get; set; }
-  public DateTime LastLoginAt { get; set; }
-  public DateTime CreateAt { get; set; }
-  public DateTime UpdateAt { get; set; }
-  public ICollection<TUserFuncGroupRel> UserFuncGroupRels { get; set; }
+  public int user_id { get; set; }
+  public string name { get; set; }
+  public string mima { get; set; }
+  public DateTime mima_change_at { get; set; }
+  public string email { get; set; }
+  public bool is_enable { get; set; }
+  public DateTime last_login_at { get; set; }
+  public DateTime create_at { get; set; }
+  public DateTime update_at { get; set; }
+  public ICollection<TUserFuncGroupRel> user_func_group_rels { get; set; }
 
 }

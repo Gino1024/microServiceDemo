@@ -1,9 +1,9 @@
 public class TFuncGroupRel
 {
-  public int FuncGroupID { get; set; }
-  public int FuncID { get; set; }
-  public DateTime CreateAt { get; set; }
-  public DateTime UpdateAt { get; set; }
-  public TFunction Func { get; set; }
-  public TFuncGroup FuncGroup { get; set; }
+  public int func_group_id { get; set; }
+  public int func_id { get; set; }
+  public DateTime create_at { get; set; }
+  public DateTime update_at { get; set; }
+  public TFunction func { get; set; }
+  public TFuncGroup func_group { get; set; }
 }

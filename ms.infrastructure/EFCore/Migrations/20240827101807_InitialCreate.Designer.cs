@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ms.infrastructure.EFCore.Migrations
 {
     [DbContext(typeof(MicroServiceDbContext))]
-    [Migration("20240826033741_InitialCreate")]
+    [Migration("20240827101807_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -26,195 +26,198 @@ namespace ms.infrastructure.EFCore.Migrations
 
             modelBuilder.Entity("TFuncGroup", b =>
                 {
-                    b.Property<int>("FuncGroupID")
+                    b.Property<int>("func_group_id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("FuncGroupID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("func_group_id"));
 
-                    b.Property<DateTime>("CreateAt")
+                    b.Property<DateTime>("create_at")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("name")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
-                    b.Property<DateTime>("UpdateAt")
+                    b.Property<DateTime>("update_at")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("FuncGroupID");
+                    b.HasKey("func_group_id");
 
                     b.ToTable("TFunctionGroup");
                 });
 
             modelBuilder.Entity("TFuncGroupRel", b =>
                 {
-                    b.Property<int>("FuncID")
+                    b.Property<int>("func_id")
                         .HasColumnType("integer");
 
-                    b.Property<int>("FuncGroupID")
+                    b.Property<int>("func_group_id")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("CreateAt")
+                    b.Property<DateTime>("create_at")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("UpdateAt")
+                    b.Property<DateTime>("update_at")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("FuncID", "FuncGroupID");
+                    b.HasKey("func_id", "func_group_id");
 
-                    b.HasIndex("FuncGroupID");
+                    b.HasIndex("func_group_id");
 
                     b.ToTable("TFuncGroupRel");
                 });
 
             modelBuilder.Entity("TFunction", b =>
                 {
-                    b.Property<int>("FuncID")
+                    b.Property<int>("func_id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("FuncID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("func_id"));
 
-                    b.Property<DateTime>("CreateAt")
+                    b.Property<DateTime>("create_at")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("description")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<DateTime>("UpdateAt")
+                    b.Property<DateTime>("update_at")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Url")
+                    b.Property<string>("url")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.HasKey("FuncID");
+                    b.HasKey("func_id");
 
                     b.ToTable("TFunction");
                 });
 
             modelBuilder.Entity("TUser", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("user_id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("user_id"));
 
-                    b.Property<DateTime>("CreateAt")
+                    b.Property<DateTime>("create_at")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Email")
+                    b.Property<string>("email")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<bool>("IsEnable")
+                    b.Property<bool>("is_enable")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("LastLoginAt")
+                    b.Property<DateTime>("last_login_at")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Mima")
+                    b.Property<string>("mima")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
-                    b.Property<string>("Name")
+                    b.Property<DateTime>("mima_change_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<DateTime>("UpdateAt")
+                    b.Property<DateTime>("update_at")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("UserId");
+                    b.HasKey("user_id");
 
                     b.ToTable("TUser");
                 });
 
             modelBuilder.Entity("TUserFuncGroupRel", b =>
                 {
-                    b.Property<int>("UserID")
+                    b.Property<int>("user_id")
                         .HasColumnType("integer");
 
-                    b.Property<int>("FuncGroupID")
+                    b.Property<int>("func_group_id")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("CreateAt")
+                    b.Property<DateTime>("create_at")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("UpdateAt")
+                    b.Property<DateTime>("update_at")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("UserID", "FuncGroupID");
+                    b.HasKey("user_id", "func_group_id");
 
                     b.ToTable("TUserFuncGroupRel");
                 });
 
             modelBuilder.Entity("TFuncGroupRel", b =>
                 {
-                    b.HasOne("TFuncGroup", "FuncGroup")
-                        .WithMany("FuncGroupRels")
-                        .HasForeignKey("FuncGroupID")
+                    b.HasOne("TFuncGroup", "func_group")
+                        .WithMany("func_group_rels")
+                        .HasForeignKey("func_group_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TFunction", "Func")
-                        .WithMany("FuncGroupRels")
-                        .HasForeignKey("FuncID")
+                    b.HasOne("TFunction", "func")
+                        .WithMany("func_group_rels")
+                        .HasForeignKey("func_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Func");
+                    b.Navigation("func");
 
-                    b.Navigation("FuncGroup");
+                    b.Navigation("func_group");
                 });
 
             modelBuilder.Entity("TUserFuncGroupRel", b =>
                 {
-                    b.HasOne("TFuncGroup", "FuncGroup")
-                        .WithMany("UserFuncGroupRels")
-                        .HasForeignKey("UserID")
+                    b.HasOne("TFuncGroup", "func_group")
+                        .WithMany("user_func_group_rels")
+                        .HasForeignKey("user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TUser", "User")
-                        .WithMany("UserFuncGroupRels")
-                        .HasForeignKey("UserID")
+                    b.HasOne("TUser", "user")
+                        .WithMany("user_func_group_rels")
+                        .HasForeignKey("user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("FuncGroup");
+                    b.Navigation("func_group");
 
-                    b.Navigation("User");
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("TFuncGroup", b =>
                 {
-                    b.Navigation("FuncGroupRels");
+                    b.Navigation("func_group_rels");
 
-                    b.Navigation("UserFuncGroupRels");
+                    b.Navigation("user_func_group_rels");
                 });
 
             modelBuilder.Entity("TFunction", b =>
                 {
-                    b.Navigation("FuncGroupRels");
+                    b.Navigation("func_group_rels");
                 });
 
             modelBuilder.Entity("TUser", b =>
                 {
-                    b.Navigation("UserFuncGroupRels");
+                    b.Navigation("user_func_group_rels");
                 });
 #pragma warning restore 612, 618
         }
