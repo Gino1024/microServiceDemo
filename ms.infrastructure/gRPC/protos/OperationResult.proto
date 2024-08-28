@@ -3,6 +3,9 @@ syntax = "proto3";
 option csharp_namespace = "ms.infrastructure.protos";
 
 message OperationResult {
-  bool isSuccess = 1;
+  bool is_success = 1;
   string msg = 2;
+}
+message StandardReply {
+  OperationResult result = 1;
 }

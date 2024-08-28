@@ -2,6 +2,7 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Mvc;
 using ms.infrastructure.protos;
+using ms.webapi.Models;
 
 namespace ms.webapi.Controllers
 {
@@ -14,25 +15,112 @@ namespace ms.webapi.Controllers
     {
       _client = client;
     }
-    // GET: api/user
-    [HttpGet]
-    public async Task<IActionResult> Get()
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetUserById(int id)
     {
-      var request = new Empty();
-      var reply = await _client.GetListAsync(request);
+      StandardResponseDto<UserResponseDto> response = new StandardResponseDto<UserResponseDto>();
+      try
+      {
 
-      // TODO: Implement logic to retrieve all users
+        GetUserByIdRequest requst = new GetUserByIdRequest()
+        {
+          Id = id
+        };
+
+        var reply = await _client.GetUserByIdAsync(requst);
+        response.is_success = reply.Result.IsSuccess;
+        response.msg = reply.Result.Msg;
+
+        if (response.is_success)
+        {
+          response.data = new UserResponseDto()
+          {
+            user_id = reply.Data.UserId,
+            name = reply.Data.Name,
+            email = reply.Data.Email,
+            is_enable = reply.Data.IsEnable,
+            last_login_at = (reply.Data.LastLoginAt == null) ? null : reply.Data.LastLoginAt.ToDateTime(),
+            mima_change_at = (reply.Data.MimaChangeAt == null) ? null : reply.Data.MimaChangeAt.ToDateTime(),
+            create_at = (reply.Data.CreateAt == null) ? null : reply.Data.CreateAt.ToDateTime(),
+            update_at = (reply.Data.UpdateAt == null) ? null : reply.Data.UpdateAt.ToDateTime(),
+          };
+        }
+
+      }
+      catch (Exception ex)
+      {
+
+      }
+
+      return Ok(response);
+    }
+    [HttpGet("GetUserByQuery")]
+    public async Task<IActionResult> GetUserByQuery(GetUserByQueryRequest instance)
+    {
+      var reply = await _client.GetUserByQueryAsync(instance);
+
       return Ok(reply);
     }
-    // GET: api/user
-    [HttpGet("{id}")]
-    public async Task<IActionResult> Get(int id)
+    [HttpPost("RegisterUser")]
+    public async Task<IActionResult> RegisterUser(RegisterUserRequestDto instance)
     {
-      var reply = await _client.GetAsync(
-                    new UserRequest() { Id = id });
+      StandardResponseDto<string> response = new StandardResponseDto<string>();
+      try
+      {
+        var request = new RegisterUserRequest()
+        {
+          Name = instance.name,
+          Email = instance.email,
+          Mima = instance.mima
+        };
+        var reply = await _client.RegisterUserAsync(request);
+        response.is_success = reply.Result.IsSuccess;
+        response.msg = reply.Result.Msg;
+      }
+      catch (Exception ex)
+      {
 
-      // TODO: Implement logic to retrieve all users
-      return Ok(reply);
+      }
+
+      return Ok(response);
+    }
+    [HttpPost("EnableUser")]
+    public async Task<IActionResult> EnableUser(int id)
+    {
+      StandardResponseDto<string> response = new StandardResponseDto<string>();
+      try
+      {
+        var request = new GetUserByIdRequest() { Id = id };
+        var reply = await _client.EnableUserAsync(request);
+        response.is_success = reply.Result.IsSuccess;
+        response.msg = reply.Result.Msg;
+      }
+      catch (Exception ex)
+      {
+
+        throw;
+      }
+
+      return Ok(response);
+    }
+    [HttpPost("DisableUser")]
+    public async Task<IActionResult> DisableUser(int id)
+    {
+      StandardResponseDto<string> response = new StandardResponseDto<string>();
+      try
+      {
+        var request = new GetUserByIdRequest() { Id = id };
+        var reply = await _client.DisableUserAsync(request);
+        response.is_success = reply.Result.IsSuccess;
+        response.msg = reply.Result.Msg;
+      }
+      catch (Exception ex)
+      {
+
+        throw;
+      }
+
+      return Ok(response);
     }
   }
 }

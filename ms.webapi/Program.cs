@@ -10,9 +10,10 @@ namespace ms.WebAPI
         {
 
             var builder = WebApplication.CreateBuilder(args);
+            bool isDevelopment = builder.Environment.IsDevelopment();
 
             // Add grpc to the builder
-            builder.RegisterGrpc();
+            builder.RegisterGrpc(isDevelopment);
 
             // Add services to the container.
 
@@ -27,19 +28,14 @@ namespace ms.WebAPI
             var app = builder.Build();
 
             // // Configure the HTTP request pipeline.
-            // if (app.Environment.IsDevelopment())
-            // {
-            //     app.UseSwagger();
-            //     app.UseSwaggerUI();
-            // }
-
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            if (app.Environment.IsDevelopment() || true)
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
             app.MapControllers();
 
             app.Run();
@@ -54,27 +50,29 @@ namespace ms.WebAPI
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static WebApplicationBuilder RegisterGrpc(this WebApplicationBuilder builder)
+        public static WebApplicationBuilder RegisterGrpc(this WebApplicationBuilder builder, bool isDevelopment)
         {
-            var grpcServices = builder.Configuration.GetSection("GrpcService").Get<List<GrpcServiceConfig>>();
+            var grpcSection = isDevelopment ? "GrpcServiceDev" : "GrpcService";
+            var grpcServices = builder.Configuration.GetSection(grpcSection).Get<List<GrpcServiceConfig>>();
             var userServiceUrl = grpcServices?.First(service => service.Name == "User").Url;
-
+            Console.WriteLine("userServiceUrl:" + userServiceUrl);
             builder.Services.AddGrpcClient<UserProto.UserProtoClient>(o =>
-                    {
-                        o.Address = new Uri(userServiceUrl);
-                    });
+            {
+                o.Address = new Uri(userServiceUrl);
+            });
 
             return builder;
-        }
 
-        /// <summary>
-        /// GrpcServiceRouteConfig
-        /// </summary>
-        public class GrpcServiceConfig
-        {
-            public string Name { get; set; }
-            public string Url { get; set; }
         }
-
     }
+
+    /// <summary>
+    /// GrpcServiceRouteConfig
+    /// </summary>
+    public class GrpcServiceConfig
+    {
+        public string Name { get; set; }
+        public string Url { get; set; }
+    }
+
 }

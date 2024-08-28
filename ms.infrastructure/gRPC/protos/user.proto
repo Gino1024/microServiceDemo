@@ -1,31 +1,52 @@
 syntax = "proto3";
 
-import "google/protobuf/empty.proto";
+import "google/protobuf/Empty.proto";
+import "google/protobuf/timestamp.proto";
 import "OperationResult.proto";
 
 option csharp_namespace = "ms.infrastructure.protos";
 
 service UserProto {
-  rpc Get (UserRequest) returns (UserReply);
-  rpc GetList (google.protobuf.Empty) returns (UsersReply);
+  rpc GetUserById (GetUserByIdRequest) returns (GetUserByIdReply);
+  rpc GetUserByQuery (GetUserByQueryRequest) returns (GetUserByQueryReply);
+  rpc RegisterUser (RegisterUserRequest) returns (StandardReply);
+  rpc EnableUser (GetUserByIdRequest) returns (StandardReply);
+  rpc DisableUser (GetUserByIdRequest) returns (StandardReply);
 }
 
-message UserRequest{
+message GetUserByIdRequest{
   int32 id = 1;
 }
 
-message UsersReply{
+message GetUserByIdReply{
   OperationResult result = 1;
-  repeated UserDto data = 2;
+  UserReplyDto data = 2;
 }
 
-message UserReply{
-  OperationResult result = 1;
-  UserDto data = 2;
+message GetUserByQueryRequest{
+  repeated int32 group = 1;
+  string name = 2;
+  repeated string order_by = 3;
 }
 
-message UserDto{
-  int32 id = 1;
+message GetUserByQueryReply{
+  OperationResult result = 1;
+  repeated UserReplyDto data = 2;
+}
+
+message UserReplyDto{
+  int32 user_id = 1;
   string name = 2;
   string email = 3;
+  google.protobuf.Timestamp mima_change_at = 4;
+  bool is_enable = 5;
+  google.protobuf.Timestamp last_login_at = 6;
+  google.protobuf.Timestamp create_at = 7;
+  google.protobuf.Timestamp update_at = 8;
+}
+
+message RegisterUserRequest{
+  string name = 1;
+  string email = 2;
+  string mima = 3;
 }
