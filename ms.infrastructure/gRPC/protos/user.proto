@@ -12,6 +12,7 @@ service UserProto {
   rpc RegisterUser (RegisterUserRequest) returns (StandardReply);
   rpc EnableUser (GetUserByIdRequest) returns (StandardReply);
   rpc DisableUser (GetUserByIdRequest) returns (StandardReply);
+  rpc Login (LoginRequest) returns (LoginReply);
 }
 
 message GetUserByIdRequest{
@@ -49,4 +50,13 @@ message RegisterUserRequest{
   string name = 1;
   string email = 2;
   string mima = 3;
+}
+
+message LoginRequest{
+  string email = 1;
+  string mima =2;
+}
+message LoginReply{
+  OperationResult result = 1;
+  string data = 2;
 }

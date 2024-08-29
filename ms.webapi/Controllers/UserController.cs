@@ -1,11 +1,13 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ms.infrastructure.protos;
 using ms.webapi.Models;
 
 namespace ms.webapi.Controllers
 {
+  [Authorize]
   [ApiController]
   [Route("api/[controller]")]
   public class UserController : ControllerBase
@@ -14,6 +16,31 @@ namespace ms.webapi.Controllers
     public UserController(UserProto.UserProtoClient client)
     {
       _client = client;
+    }
+    [AllowAnonymous]
+    [HttpPost("Login")]
+    public async Task<IActionResult> Login(LoginRequest instance)
+    {
+      StandardResponseDto<string> response = new StandardResponseDto<string>();
+      try
+      {
+        LoginRequest requst = new LoginRequest()
+        {
+          Email = instance.Email,
+          Mima = instance.Mima
+        };
+
+        var reply = await _client.LoginAsync(requst);
+        response.is_success = reply.Result.IsSuccess;
+        response.msg = reply.Result.Msg;
+        response.data = response.is_success ? reply.Data : null;
+      }
+      catch (Exception ex)
+      {
+
+      }
+
+      return Ok(response);
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserById(int id)
@@ -76,6 +103,7 @@ namespace ms.webapi.Controllers
         var reply = await _client.RegisterUserAsync(request);
         response.is_success = reply.Result.IsSuccess;
         response.msg = reply.Result.Msg;
+        response.data = null;
       }
       catch (Exception ex)
       {
@@ -94,6 +122,7 @@ namespace ms.webapi.Controllers
         var reply = await _client.EnableUserAsync(request);
         response.is_success = reply.Result.IsSuccess;
         response.msg = reply.Result.Msg;
+        response.data = null;
       }
       catch (Exception ex)
       {
@@ -113,6 +142,7 @@ namespace ms.webapi.Controllers
         var reply = await _client.DisableUserAsync(request);
         response.is_success = reply.Result.IsSuccess;
         response.msg = reply.Result.Msg;
+        response.data = null;
       }
       catch (Exception ex)
       {

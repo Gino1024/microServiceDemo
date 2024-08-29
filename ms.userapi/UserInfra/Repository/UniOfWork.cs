@@ -11,32 +11,32 @@ namespace Repository
     {
       _dbContext = dbContext;
     }
-    public void SaveChange()
+    public async Task SaveChange()
     {
-      _dbContext.SaveChanges();
+      await _dbContext.SaveChangesAsync();
     }
 
-    public void BeginTrans()
+    public async Task BeginTrans()
     {
-      _transaction = _dbContext.Database.BeginTransaction();
+      _transaction = await _dbContext.Database.BeginTransactionAsync();
     }
-    public void Commit()
+    public async Task Commit()
     {
       try
       {
-        _dbContext.SaveChanges();  // 保存所有更改
-        _transaction?.Commit();  // 提交事务
+        await _dbContext.SaveChangesAsync(); // 保存所有更改
+        await _transaction?.CommitAsync();  // 提交事务
       }
       catch
       {
-        Rollback();
+        await Rollback();
         throw;
       }
     }
 
-    public void Rollback()
+    public async Task Rollback()
     {
-      _transaction?.Rollback();  // 回滚事务
+      await _transaction?.RollbackAsync();  // 回滚事务
     }
   }
 }

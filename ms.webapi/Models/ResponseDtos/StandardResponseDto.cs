@@ -4,6 +4,6 @@ namespace ms.webapi.Models
   {
     public bool is_success { get; set; } = false;
     public string msg { get; set; } = string.Empty;
-    public T data { get; set; }
+    public T? data { get; set; }
   }
 }

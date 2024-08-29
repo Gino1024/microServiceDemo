@@ -5,6 +5,7 @@ using ms.infrastructure.protos;
 using StackExchange.Redis;
 using UserDomain.Entities;
 using UserInfra.Repository;
+using ms.infrastructure.JWTHandler;
 
 namespace ms.user.Services
 {
@@ -20,80 +21,78 @@ namespace ms.user.Services
             _uniOfWork = uniOfWork;
         }
 
-        public override Task<GetUserByIdReply> GetUserById(GetUserByIdRequest request, ServerCallContext context)
+        public override async Task<GetUserByIdReply> GetUserById(GetUserByIdRequest request, ServerCallContext context)
         {
             var reply = new GetUserByIdReply();
             reply.Result = new OperationResult();
             try
             {
-                UserEntity user = _userRepository.GetUserById(request.Id);
+                UserEntity user = await _userRepository.GetUserById(request.Id);
 
                 if (user == null)
                 {
                     reply.Result.Msg = "操作失敗: 無對應Id";
+                    return reply;
                 }
-                else
-                {
-                    reply.Data = new UserReplyDto();
-                    reply.Data.UserId = user.user_id;
-                    reply.Data.Name = user.name;
-                    reply.Data.Email = user.email;
-                    reply.Data.MimaChangeAt = user.mima_change_at.HasValue ? user.mima_change_at.Value.ToTimestamp() : null;
-                    reply.Data.IsEnable = user.is_enable;
-                    reply.Data.LastLoginAt = user.last_login_at.HasValue ? user.last_login_at.Value.ToTimestamp() : null;
-                    reply.Data.CreateAt = user.create_at.HasValue ? user.create_at.Value.ToTimestamp() : null;
-                    reply.Data.UpdateAt = user.update_at.HasValue ? user.update_at.Value.ToTimestamp() : null;
 
-                    reply.Result.IsSuccess = true;
-                    reply.Result.Msg = "查詢成功";
-                }
+                reply.Data = new UserReplyDto();
+                reply.Data.UserId = user.user_id;
+                reply.Data.Name = user.name;
+                reply.Data.Email = user.email;
+                reply.Data.MimaChangeAt = user.mima_change_at.HasValue ? user.mima_change_at.Value.ToTimestamp() : null;
+                reply.Data.IsEnable = user.is_enable;
+                reply.Data.LastLoginAt = user.last_login_at.HasValue ? user.last_login_at.Value.ToTimestamp() : null;
+                reply.Data.CreateAt = user.create_at.HasValue ? user.create_at.Value.ToTimestamp() : null;
+                reply.Data.UpdateAt = user.update_at.HasValue ? user.update_at.Value.ToTimestamp() : null;
+
+                reply.Result.IsSuccess = true;
+                reply.Result.Msg = "操作成功";
             }
             catch (Exception ex)
             {
                 reply.Result.Msg = ex.ToString();
             }
 
-            return Task.FromResult(reply);
+            return reply;
         }
-        public override Task<GetUserByQueryReply> GetUserByQuery(GetUserByQueryRequest request, ServerCallContext context)
+        public override async Task<GetUserByQueryReply> GetUserByQuery(GetUserByQueryRequest request, ServerCallContext context)
         {
             var reply = new GetUserByQueryReply();
             reply.Result = new OperationResult();
 
-            return Task.FromResult(reply);
+            return reply;
         }
-        public override Task<StandardReply> RegisterUser(RegisterUserRequest request, ServerCallContext context)
+        public override async Task<StandardReply> RegisterUser(RegisterUserRequest request, ServerCallContext context)
         {
             var reply = new StandardReply();
             reply.Result = new OperationResult();
             try
             {
-                var isEmailExists = _userRepository.GetUserByEmail(request.Email) != null;
+                var isEmailExists = await _userRepository.GetUserByEmail(request.Email) != null;
                 if (isEmailExists)
                 {
-                    reply.Result.Msg = "Email已被註冊";
+                    reply.Result.Msg = "操作失敗: Email已被註冊";
+                    return reply;
                 }
-                else
-                {
-                    _uniOfWork.BeginTrans();
-                    DateTime dtNow = DateTime.UtcNow;
 
-                    var user_entity = UserEntity.Create(
-                        0,
-                        request.Name,
-                        request.Email,
-                        request.Mima,
-                        dtNow,
-                        true,
-                        null,
-                        dtNow,
-                        dtNow
-                    );
-                    _userRepository.RegisterUser(user_entity);
-                    _uniOfWork.Commit();
+                await _uniOfWork.BeginTrans();
+                DateTime dtNow = DateTime.UtcNow;
 
-                    reply.Result.Msg = "新增成功";
-                }
+                var user_entity = UserEntity.Create(
+                    0,
+                    request.Name,
+                    request.Email,
+                    request.Mima,
+                    dtNow,
+                    true,
+                    null,
+                    dtNow,
+                    dtNow
+                );
+                await _userRepository.RegisterUser(user_entity);
+                await _uniOfWork.Commit();
+
+                reply.Result.Msg = "操作成功";
                 reply.Result.IsSuccess = true;
             }
             catch (Exception ex)
@@ -102,64 +101,91 @@ namespace ms.user.Services
                 reply.Result.Msg = ex.ToString();
             }
 
-            return Task.FromResult(reply);
+            return reply;
         }
-
-        public override Task<StandardReply> EnableUser(GetUserByIdRequest request, ServerCallContext context)
+        public override async Task<StandardReply> EnableUser(GetUserByIdRequest request, ServerCallContext context)
         {
             var reply = new StandardReply();
             reply.Result = new OperationResult();
             try
             {
-                UserEntity user = _userRepository.GetUserById(request.Id);
+                UserEntity user = await _userRepository.GetUserById(request.Id);
                 if (user == null)
                 {
                     reply.Result.Msg = "操作失敗: 無對應Id";
+                    return reply;
                 }
-                else
-                {
-                    DateTime dtNow = DateTime.UtcNow;
-                    user.Enable(dtNow);
-                    _userRepository.Enable(user);
+                DateTime dtNow = DateTime.UtcNow;
+                user.Enable(dtNow);
+                await _userRepository.Enable(user);
 
-                    reply.Result.IsSuccess = true;
-                    reply.Result.Msg = "操作成功";
-                }
+                reply.Result.IsSuccess = true;
+                reply.Result.Msg = "操作成功";
             }
             catch (Exception ex)
             {
                 reply.Result.Msg = ex.ToString();
             }
 
-            return Task.FromResult(reply);
+            return reply;
         }
-        public override Task<StandardReply> DisableUser(GetUserByIdRequest request, ServerCallContext context)
+        public override async Task<StandardReply> DisableUser(GetUserByIdRequest request, ServerCallContext context)
         {
             var reply = new StandardReply();
             reply.Result = new OperationResult();
             try
             {
-                UserEntity user = _userRepository.GetUserById(request.Id);
+                UserEntity user = await _userRepository.GetUserById(request.Id);
                 if (user == null)
                 {
                     reply.Result.Msg = "操作失敗: 無對應Id";
+                    return reply;
                 }
-                else
-                {
-                    DateTime dtNow = DateTime.UtcNow;
-                    user.Disable(dtNow);
-                    _userRepository.Disable(user);
+                DateTime dtNow = DateTime.UtcNow;
+                user.Disable(dtNow);
+                await _userRepository.Disable(user);
 
-                    reply.Result.IsSuccess = true;
-                    reply.Result.Msg = "操作成功";
-                }
+                reply.Result.IsSuccess = true;
+                reply.Result.Msg = "操作成功";
             }
             catch (Exception ex)
             {
                 reply.Result.Msg = ex.ToString();
             }
 
-            return Task.FromResult(reply);
+            return reply;
         }
+        public override async Task<LoginReply> Login(LoginRequest request, ServerCallContext context)
+        {
+            var reply = new LoginReply();
+            reply.Result = new OperationResult();
+            try
+            {
+                UserEntity user = await _userRepository.GetUserByEmail(request.Email);
+                if (user == null)
+                {
+                    reply.Result.Msg = "登入失敗: 無此使用者";
+                    return reply;
+                }
+
+                if (request.Mima != user.mima)
+                {
+                    reply.Result.Msg = "登入失敗: 請確認是否輸入正確";
+                    return reply;
+                }
+
+                //建立JWT Token
+                reply.Result.IsSuccess = true;
+                reply.Result.Msg = "登入成功";
+                reply.Data = JWTHandler.GenerateJwtToken(user.email);
+            }
+            catch (Exception ex)
+            {
+                reply.Result.Msg = ex.ToString();
+            }
+
+            return reply;
+        }
+
     }
 }

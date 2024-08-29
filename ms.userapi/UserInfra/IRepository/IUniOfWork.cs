@@ -2,9 +2,9 @@ namespace UserInfra.Repository
 {
   public interface IUniOfWork
   {
-    public void SaveChange();
-    public void BeginTrans();
-    public void Commit();
-    public void Rollback();
+    public Task SaveChange();
+    public Task BeginTrans();
+    public Task Commit();
+    public Task Rollback();
   }
 }

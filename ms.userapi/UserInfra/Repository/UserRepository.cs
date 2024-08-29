@@ -11,9 +11,9 @@ namespace Repository
     {
       _dbContext = dbContext;
     }
-    public UserEntity? GetUserByEmail(string email)
+    public async Task<UserEntity?> GetUserByEmail(string email)
     {
-      var user = _dbContext.TUser.Where(m => m.email == email).FirstOrDefault();
+      var user = await _dbContext.TUser.Where(m => m.email == email).FirstOrDefaultAsync();
       if (user == null)
         return null;
 
@@ -32,9 +32,9 @@ namespace Repository
       return user_entity;
     }
 
-    public UserEntity? GetUserById(int id)
+    public async Task<UserEntity?> GetUserById(int id)
     {
-      var user = _dbContext.TUser.Where(m => m.user_id == id).AsNoTracking().FirstOrDefault();
+      var user = await _dbContext.TUser.Where(m => m.user_id == id).AsNoTracking().FirstOrDefaultAsync();
       if (user == null)
         return null;
 
@@ -53,7 +53,7 @@ namespace Repository
       return user_entity;
     }
 
-    public void RegisterUser(UserEntity user_entity)
+    public async Task RegisterUser(UserEntity user_entity)
     {
       TUser user = new TUser()
       {
@@ -68,11 +68,11 @@ namespace Repository
         update_at = user_entity.update_at,
       };
 
-      _dbContext.TUser.Add(user);
-      _dbContext.SaveChanges();
+      await _dbContext.TUser.AddAsync(user);
+      await _dbContext.SaveChangesAsync();
       user_entity.SetUserId(user.user_id);
     }
-    public void Disable(UserEntity user_entity)
+    public async Task Disable(UserEntity user_entity)
     {
       var user = new TUser { user_id = user_entity.user_id, is_enable = false, update_at = user_entity.update_at };
       _dbContext.Attach(user);
@@ -80,17 +80,17 @@ namespace Repository
       _dbContext.Entry(user).Property(e => e.update_at).IsModified = true;
 
       user.is_enable = false;
-      _dbContext.SaveChanges();
+      await _dbContext.SaveChangesAsync();
     }
 
-    public void Enable(UserEntity user_entity)
+    public async Task Enable(UserEntity user_entity)
     {
       var user = new TUser { user_id = user_entity.user_id, is_enable = true, update_at = user_entity.update_at };
       _dbContext.Attach(user);
       _dbContext.Entry(user).Property(e => e.is_enable).IsModified = true;
       _dbContext.Entry(user).Property(e => e.update_at).IsModified = true;
 
-      _dbContext.SaveChanges();
+      await _dbContext.SaveChangesAsync();
     }
   }
 }
