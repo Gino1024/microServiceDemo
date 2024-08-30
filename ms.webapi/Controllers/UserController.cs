@@ -12,10 +12,12 @@ namespace ms.webapi.Controllers
   [Route("api/[controller]")]
   public class UserController : ControllerBase
   {
+    private readonly ILogger<UserController> _logger;
     private readonly UserProto.UserProtoClient _client;
-    public UserController(UserProto.UserProtoClient client)
+    public UserController(ILogger<UserController> logger, UserProto.UserProtoClient client)
     {
       _client = client;
+      _logger = logger;
     }
     [AllowAnonymous]
     [HttpPost("Login")]
@@ -34,10 +36,15 @@ namespace ms.webapi.Controllers
         response.is_success = reply.Result.IsSuccess;
         response.msg = reply.Result.Msg;
         response.data = response.is_success ? reply.Data : null;
+
+        if (response.is_success)
+          _logger.LogInformation($"User: {instance.Email} Login Success");
+        else
+          _logger.LogInformation($"User: {instance.Email} Login Faild: {response.msg}");
       }
       catch (Exception ex)
       {
-
+        _logger.LogError($"Error: {ex}");
       }
 
       return Ok(response);

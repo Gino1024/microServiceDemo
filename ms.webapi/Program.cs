@@ -19,15 +19,21 @@ namespace ms.WebAPI
             // Add grpc to the builder
             builder.RegisterGrpc(isDevelopment);
 
+            // 注册自定义的 Kafka 日志服务
+            builder.Logging.ClearProviders();
+            //information以上可以自己控制
+            builder.Logging.AddProvider(new KafkaLoggerProvider("localhost:9092", "my-log-topic", LogLevel.Debug));
+            builder.Logging.AddFilter<KafkaLoggerProvider>(null, LogLevel.Warning);
+            builder.Logging.AddFilter<KafkaLoggerProvider>("ms", LogLevel.Debug);
             // Add services to the container.
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            // 添加 Swagger 生成服务
+            // 添加 Swagger 生成服務
             builder.Services.AddSwaggerGen(options =>
             {
-                // 配置 JWT Token 的输入
+                // 配置 JWT Token 的輸入
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -35,23 +41,23 @@ namespace ms.WebAPI
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "输入格式为: Bearer {token}"
+                    Description = "輸入格式為: Bearer {token}"
                 });
 
-                // 添加全局的 JWT Token 验证
+                // 添加全局的 JWT Token 驗證
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
                 });
             });
 
@@ -110,7 +116,7 @@ namespace ms.WebAPI
             var grpcSection = isDevelopment ? "GrpcServiceDev" : "GrpcService";
             var grpcServices = builder.Configuration.GetSection(grpcSection).Get<List<GrpcServiceConfig>>();
             var userServiceUrl = grpcServices?.First(service => service.Name == "User").Url;
-            Console.WriteLine("userServiceUrl:" + userServiceUrl);
+
             builder.Services.AddGrpcClient<UserProto.UserProtoClient>(o =>
             {
                 o.Address = new Uri(userServiceUrl);
