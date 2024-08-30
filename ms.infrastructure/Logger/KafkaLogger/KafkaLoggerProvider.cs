@@ -15,7 +15,6 @@ public class KafkaLoggerProvider : ILoggerProvider
 
   public ILogger CreateLogger(string categoryName)
   {
-    Console.WriteLine($"createLogger {categoryName}");
     return new KafkaLogger<object>(_bootstrapServers, _topic, categoryName, _minLogLevel);
   }
 

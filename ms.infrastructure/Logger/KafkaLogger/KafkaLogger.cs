@@ -11,7 +11,6 @@ public class KafkaLogger<T> : ILogger<T>
 
   public KafkaLogger(string bootstrapServers, string topic, string categoryName, LogLevel minLogLevel)
   {
-    Console.WriteLine("create kafkalogger");
     _topic = topic;
     _minLogLevel = minLogLevel;
     _categoryName = categoryName;
@@ -33,7 +32,6 @@ public class KafkaLogger<T> : ILogger<T>
 
   public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
   {
-    Console.WriteLine($"Logged to Kafka: {logLevel}");
     if (!IsEnabled(logLevel))
     {
       return;
@@ -43,11 +41,9 @@ public class KafkaLogger<T> : ILogger<T>
     try
     {
       _producer.Produce(_topic, new Message<Null, string> { Value = message });
-      Console.WriteLine($"Logged to Kafka: {message}");
     }
     catch (ProduceException<Null, string> e)
     {
-      Console.WriteLine($"Failed to log to Kafka: {e.Error.Reason}");
     }
   }
 }
