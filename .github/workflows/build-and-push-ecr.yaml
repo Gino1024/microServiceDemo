@@ -32,6 +32,15 @@ jobs:
             dockerfile: ./userapi.Dockerfile
 
     steps:
+      - name: Debug vars
+        run: |
+          echo "vars.AWS_ACCOUNT_ID=[${{ vars.AWS_ACCOUNT_ID }}]"
+          echo "Role ARN should be: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/github-actions-ecr-pusher"
+
+      - name: Fail early if empty
+        run: |
+          test -n "${{ vars.AWS_ACCOUNT_ID }}" || { echo "AWS_ACCOUNT_ID is empty"; exit 1; }
+
       - name: Checkout
         uses: actions/checkout@v4
 
