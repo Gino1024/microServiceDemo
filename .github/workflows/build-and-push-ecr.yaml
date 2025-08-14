@@ -26,10 +26,10 @@ jobs:
         include:
           - name: apigateway
             repository: apigateway
-            dockerfile: ./webapi.Dockerfile
+            dockerfile: ./webapi.dockerfile
           - name: userapi
             repository: userapi
-            dockerfile: ./userapi.Dockerfile
+            dockerfile: ./userapi.dockerfile
 
     steps:
       - name: Debug vars
