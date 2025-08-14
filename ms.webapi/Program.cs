@@ -1,11 +1,14 @@
+using Microsoft.EntityFrameworkCore;
 using ms.infrastructure.protos;
 using ms.infrastructure.System.BuilderExtension;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.RegisterKafkaLogger();
+//builder.RegisterKafkaLogger();
 builder.RegisterGrpc();
 builder.RegisterDBConnection();
 builder.RegisterJWTTokenAuth();
@@ -14,6 +17,15 @@ builder.RegisterSwaggerWithJTWToken();
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+// ✅ 執行 migration：確保資料庫存在，並套用最新 migration
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<MicroServiceDbContext>();
+
+    // 若要用 migration 系統（推薦），使用這行
+    dbContext.Database.Migrate();
+}
 
 // // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || true)

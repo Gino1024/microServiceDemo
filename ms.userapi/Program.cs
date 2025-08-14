@@ -4,12 +4,13 @@ using UserInfra.Repository;
 using ms.infrastructure.System.BuilderExtension;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 // Add services to the container.
 builder.Services.AddGrpc();
 
 builder.RegisterService();
-builder.RegisterKafkaLogger();
+//builder.RegisterKafkaLogger();
 builder.RegisterDBConnection();
 builder.RegisterJWTTokenAuth();
 

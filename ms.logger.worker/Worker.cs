@@ -1,5 +1,3 @@
-using KafkaHandler;
-
 namespace ms.logger.worker;
 
 public class Worker : BackgroundService

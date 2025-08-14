@@ -96,6 +96,7 @@ namespace ms.webapi.Controllers
       return Ok(reply);
     }
     [HttpPost("RegisterUser")]
+    [AllowAnonymous]
     public async Task<IActionResult> RegisterUser(RegisterUserRequestDto instance)
     {
       StandardResponseDto<string> response = new StandardResponseDto<string>();
