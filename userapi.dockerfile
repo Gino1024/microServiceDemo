@@ -22,7 +22,7 @@ RUN dotnet publish ms.userapi/ms.user.csproj \
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS runtime
 WORKDIR /app
 # 可選：文件化容器 Port（K8s 不靠這個，但對本地 run 有幫助）
-EXPOSE 5000
+EXPOSE 8080
 
 COPY --from=publish /out .
 
