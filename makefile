@@ -3,7 +3,7 @@
 AWS_REGION ?= ap-east-2
 ACCOUNT_ID := $(shell aws sts get-caller-identity --query Account --output text)
 ECR        := $(ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
-VERSION    ?= 1.0.0   # 預設版號，可以透過 make VERSION=xxx 覆寫
+VERSION    ?= latest   # 預設版號，可以透過 make VERSION=xxx 覆寫
 
 # 預設目標：建置兩個 image
 all: apigateway userapi
@@ -13,7 +13,7 @@ apigateway:
 	docker build -f ./webapi.dockerfile -t apigateway:$(VERSION) .
 
 userapi:
-	docker build -f ./user.dockerfile -t userapi:$(VERSION) .
+	docker build -f ./userapi.dockerfile -t userapi:$(VERSION) .
 
 # --- Push to ECR ---  手動時使用而已, 需手動調整版號, 後續藉由Github Action
 push: all

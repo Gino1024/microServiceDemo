@@ -33,6 +33,9 @@ if (app.Environment.IsDevelopment() || true)
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+/* 先掛一個極簡 healthz（純文字 200 OK） */
+app.MapGet("/healthz", () => Results.Text("OK"))
+   .AllowAnonymous();      // 若全域有 RequireAuthorization，可確保此路徑不需登入
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
