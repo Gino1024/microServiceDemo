@@ -52,7 +52,7 @@ if (app.Environment.IsDevelopment() || true)
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("swagger/v1/swagger.json", $"MicroService Via gRPC {version}");
+        c.SwaggerEndpoint("v1/swagger.json", $"MicroService Via gRPC {version}");
     });
 }
 /* 先掛一個極簡 healthz（純文字 200 OK） */
