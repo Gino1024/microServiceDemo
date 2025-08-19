@@ -78,6 +78,7 @@ public static class BuilderExtension
         var grpcServices = builder.Configuration.GetSection(grpcSection).Get<List<GrpcServiceConfig>>();
         var userServiceUrl = grpcServices?.First(service => service.Name == "User").Url;
 
+        Console.WriteLine($"userServiceUrl:{userServiceUrl}");
         builder.Services.AddGrpcClient<UserProto.UserProtoClient>(o =>
         {
             o.Address = new Uri(userServiceUrl);
