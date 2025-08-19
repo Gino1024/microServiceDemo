@@ -19,7 +19,7 @@ builder.Services.AddAuthorization();
 
 
 var version = Environment.GetEnvironmentVariable("GIT_SHA")?.ToString();
-version = (string.IsNullOrEmpty(version)) ? "dev" : (version.Length > 8) ? version.Substring(0, 8) : version;
+version = (string.IsNullOrEmpty(version)) ? "dev1" : (version.Length > 8) ? version.Substring(0, 8) : version;
 
 builder.Services.AddSwaggerGen(c =>
 {
