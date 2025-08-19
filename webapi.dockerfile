@@ -20,6 +20,8 @@ RUN dotnet publish ms.webapi/ms.webapi.csproj \
 
 # ---------- Runtime ----------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+ARG GIT_SHA
+ENV GIT_SHA=${GIT_SHA}
 WORKDIR /app
 EXPOSE 8080
 COPY --from=build /out .
